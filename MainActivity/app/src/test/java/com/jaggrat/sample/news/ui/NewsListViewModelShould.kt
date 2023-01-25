@@ -51,6 +51,15 @@ class NewsListViewModelShould : BaseUnitTest(){
     }
 
     @Test
+    fun emitErrorWhenReceiveEmptyResponse() = runTest {
+        sampleEmptyResponse()
+
+        underTest.getLatestNews()
+
+        assertEquals(underTest.uiState().value, UiState.Error("Something went wrong"))
+    }
+
+    @Test
     fun showSpinnerWhileLoading() = runTest {
         sampleSuccessResponse()
 
@@ -65,7 +74,8 @@ class NewsListViewModelShould : BaseUnitTest(){
         sampleErrorResponse()
         underTest.uiState().captureValues {
             underTest.getLatestNews()
-            assertFalse(values[0] !is UiState.Loading)
+
+            assertNotSame(values.last(), UiState.Loading)
         }
     }
 
@@ -75,7 +85,7 @@ class NewsListViewModelShould : BaseUnitTest(){
 
         underTest.uiState().captureValues {
             underTest.getLatestNews()
-            assertTrue(values.last() !is UiState.Loading)
+            assertFalse(values.last() is UiState.Loading)
         }
     }
 
@@ -91,6 +101,14 @@ class NewsListViewModelShould : BaseUnitTest(){
         whenever(repository.getNewsList()).thenReturn(
             flow {
                 emit(Result.failure(exception))
+            }
+        )
+    }
+
+    private suspend fun sampleEmptyResponse() {
+        whenever(repository.getNewsList()).thenReturn(
+            flow {
+                emit(Result.success(emptyList()))
             }
         )
     }

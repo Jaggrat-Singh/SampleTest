@@ -37,32 +37,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showCurrentState(state: UiState) {
-        when (state) {
-            is UiState.Success -> setUpNewsList(state.latestNews)
-            is UiState.Error -> showError(state.message)
-            is UiState.Loading -> showLoading()
-        }
-    }
-
     private fun setUpNewsList(latestNews: List<News>) {
         newAdapter.submitList(latestNews)
-        loader.visibility = View.GONE
-        error_tv.visibility = View.GONE
+        news_list.visibility = View.VISIBLE
     }
 
 
 
     private fun showLoading() {
         loader.visibility = View.VISIBLE
-        error_tv.visibility = View.GONE
     }
 
     private fun showError(error: String) {
         val errorTv= findViewById<TextView>(R.id.error_tv)
         errorTv.text = error
         errorTv.visibility = View.VISIBLE
+    }
+
+    private fun showCurrentState(state: UiState) {
         loader.visibility = View.GONE
+        error_tv.visibility = View.GONE
+        news_list.visibility = View.GONE
+        when (state) {
+            is UiState.Success -> setUpNewsList(state.latestNews)
+            is UiState.Error -> showError(state.message)
+            is UiState.Loading -> showLoading()
+        }
     }
 
     private fun initNewsView() {
