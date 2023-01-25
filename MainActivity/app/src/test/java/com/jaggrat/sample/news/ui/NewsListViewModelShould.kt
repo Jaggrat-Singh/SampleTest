@@ -75,7 +75,7 @@ class NewsListViewModelShould : BaseUnitTest(){
         underTest.uiState().captureValues {
             underTest.getLatestNews()
 
-            assertNotSame(values.last(), UiState.Loading)
+            assertFalse(values.last() is UiState.Loading)
         }
     }
 
